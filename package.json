@@ -1,6 +1,6 @@
 {
   "name": "vue-template-es2015-loader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "compile vue template file specifically without `.vue` file but still using `vue-loader`",
   "main": "index.js",
   "repository": {
@@ -15,7 +15,8 @@
     "loader",
     "vue-loader",
     "vue-html-loader",
-    "vue-template-loader"
+    "vue-template-loader",
+    "vue-template-compiler-loader"
   ],
   "author": "JounQin",
   "license": "MIT",

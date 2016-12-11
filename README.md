@@ -5,11 +5,20 @@ compile vue template file specifically without `.vue` file but still using `vue-
 
 You need to add `vue-loader` into your (dev)dependencies, which is required to use inside.
 
-With this package/loader, you could specific your template, script, style out of `.vue`, what means you can write your template in a `.pug` or other template engine.
+With this package/loader, you could specific your template, script, style out of `.vue`, what means you can write your
+template in a `.pug` or other template engine.
 
 Of course, you should handler the template loader by yourself.
 
-## Example
+## Why not just use `template` option
+
+The `template` option requires Vue to compile it when app is running, what means you must use `vue/dist/vue.common.js`
+instead of `vue.runtime.common.js`(`main` field in `package.json`). Then your bundle size will be a bit larger and your
+app will be a bit slower than excluding the compiler and compiling it in advance.
+
+That is what this module wants to do (same as the `vue-loader).
+
+## Configuration
 
 If your are using `pug`, try to add a loader config as following:
 
@@ -17,8 +26,39 @@ If your are using `pug`, try to add a loader config as following:
 {
   test: /\.pug$/,
   loader: `vue-template-es2015-loader!pug-html-loader?exports=false&pretty`,
-  exclude: nodeModules
+  exclude: /node_modules/
 }
 ```
 
-As you see, you should transform the `.pug` template by using `pug-html-loader` first, then `vue-template-es2015-loader` will handler the transformation from static html template to compiled render functions.
+As you see, you should transform the `.pug` template by using `pug-html-loader` first, then `vue-template-es2015-loader`
+will handler the transformation from static html template to compiled render functions.
+
+## Usage
+
+``` js
+export default from './index.pug'
+```
+
+It will be compiled to something like following:
+
+``` js
+export default {
+  render: <Function>,
+  staticRenderFns: <Array<Function>>
+}
+```
+
+## Combine with styles
+
+``` js
+export default {
+  ...require('./index.pug'),
+  data() {
+    return {
+      // using css modules
+      classes: require('./index.styl')
+    }
+  }
+  // `computed`, `methods` get here as normal
+}
+```
