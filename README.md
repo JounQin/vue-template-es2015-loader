@@ -16,7 +16,7 @@ The `template` option requires Vue to compile it when app is running, what means
 instead of `vue.runtime.common.js`(`main` field in `package.json`). Then your bundle size will be a bit larger and your
 app will be a bit slower than excluding the compiler and compiling it in advance.
 
-That is what this module wants to do (same as the `vue-loader).
+That is what this module wants to do (same as the `vue-loader`).
 
 ## Configuration
 
@@ -35,30 +35,37 @@ will handler the transformation from static html template to compiled render fun
 
 ## Usage
 
-``` js
-export default from './index.pug'
-```
-
-It will be compiled to something like following:
+The template file will be compiled to an object like following which is a valid vue component already:
 
 ``` js
-export default {
+{
   render: <Function>,
   staticRenderFns: <Array<Function>>
 }
 ```
 
-## Combine with styles
+## Combine with styles and other options
 
 ``` js
+// YourComponent.js
+
+// You can also just import your style here when not using `css modules`
+import classes from './index.styl'
+
 export default {
   ...require('./index.pug'),
   data() {
     return {
       // using css modules
-      classes: require('./index.styl')
+      classes
     }
   }
   // `computed`, `methods` get here as normal
 }
 ```
+
+---
+
+Finally, we can use vue template without `.vue`! 
+
+Please remember to handler the style files by yourself.
