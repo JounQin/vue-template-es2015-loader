@@ -1,6 +1,6 @@
 {
   "name": "vue-template-es2015-loader",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "compile vue template file specifically without `.vue` file",
   "main": "index.js",
   "repository": {
