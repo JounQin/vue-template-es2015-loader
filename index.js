@@ -1,9 +1,14 @@
+const path = require('path')
+
 const loaderUtils = require('loader-utils')
 
 const compiler = require('vue-template-compiler')
 const transpile = require('vue-template-es2015-compiler')
 
-const genId = require('./gen-id')
+const hash = require('hash-sum')
+const cache = Object.create(null)
+
+const genId = file => cache[file] || (cache[file] = hash(file))
 
 // vue compiler module for using transforming `<tag>:<attribute>` to `require`
 const defaultTransformToRequire = {
@@ -54,7 +59,8 @@ module.exports = function (content) {
   const isServer = this.options.target === 'node'
 
   const query = loaderUtils.parseQuery(this.query)
-  const vueOptions = this.options.__vueOptions__ = this.options.__vueOptions__ || Object.assign({}, this.options.vue, this.vue, query)
+  const vueOptions = this.options.__vueOptions__ = this.options.__vueOptions__ ||
+    Object.assign({}, this.options.vue, this.vue, query)
 
   if (vueOptions.transformToRequire) {
     transformToRequire = Object.assign(
@@ -68,14 +74,11 @@ module.exports = function (content) {
     preserveWhitespace: vueOptions.preserveWhitespace
   }, defaultCompileOptions))
 
-  const id = genId(this.resourcePath)
+  const id = genId(path.relative(this.options.context, this.resourcePath))
 
   compiled.errors.forEach(error => {
     this.emitError('template syntax error ' + error)
   })
-
-  const shouldHotReload = !isServer && !this.minimize &&
-    process.env.NODE_ENV !== 'production'
 
   const bubleOptions = vueOptions.buble
   let output = transpile(writeRenderCode(compiled, id), bubleOptions)
@@ -88,7 +91,8 @@ module.exports = function (content) {
     output += `\nrender._withStripped = true`
   }
 
-  if (shouldHotReload) {
+  if (!isServer && !this.minimize &&
+    process.env.NODE_ENV !== 'production') {
     output += writeHotReloadCode(id)
   }
 
@@ -100,10 +104,11 @@ function writeRenderCode(compiled, id) {
     `var render = ${toFunction(compiled.render)}`,
     `var staticRenderFns = [${compiled.staticRenderFns.map(toFunction).join(',')}]`,
     'module.exports = function (options) {',
+    '  options = options || {}',
     '  options.render = render',
     '  options.staticRenderFns = staticRenderFns',
-    '  if (module.hot && api) {',
-    `    api.createRecord("${id}", options)`,
+    '  if (module.hot) {',
+    `    api && api.createRecord("${id}", options)`,
     '  }',
     '  return options',
     '}\n'
