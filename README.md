@@ -1,4 +1,6 @@
 # vue-template-es2015-loader
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/JounQin/vue-template-es2015-loader.svg)](https://greenkeeper.io/)
 compile vue template file specifically without `.vue` file
 
 *This module is inspired by [vue-template-loader](https://www.npmjs.com/package/vue-template-loader) and
