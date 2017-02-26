@@ -1,6 +1,6 @@
 {
   "name": "vue-template-es2015-loader",
-  "version": "2.1.1",
+  "version": "2.1.2",
   "description": "compile vue template file specifically without `.vue` file",
   "main": "index.js",
   "repository": {
@@ -25,11 +25,11 @@
   },
   "homepage": "https://github.com/JounQin/vue-template-es2015-loader#readme",
   "peerDependencies": {
-    "vue-template-compiler": "^2.0.0"
+    "vue-template-compiler": "^2.*"
   },
   "dependencies": {
     "hash-sum": "^1.0.2",
-    "loader-utils": "^0.2.16",
+    "loader-utils": "^1.0.2",
     "vue-template-es2015-compiler": "^1.4.0"
   }
 }
